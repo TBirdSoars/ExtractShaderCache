@@ -8,8 +8,11 @@ namespace ExtractShaderCache
 {
     class Program
     {
-        // Bool to check if chache is actually a shader cache
+        // Bool to check if cache is actually a shader cache
         private static bool cacheCheck = false;
+        // Bools for if shaders are vertex or pixel shaders
+        private static bool isVS = false;
+        private static bool isPS = false;
 
         // Full path of cache file for filestream
         private static string cachePath = "";
@@ -20,10 +23,6 @@ namespace ExtractShaderCache
         // File name of output shader file
         private static string shaderName = "";
 
-        // Bools for if shaders are vertex or pixel shaders
-        private static bool isVS = false;
-        private static bool isPS = false;
-
         // First 4 bytes of shader cache
         private static byte[] fileCheck = {0x44, 0x43, 0x41, 0x43}; //DCAC
         // First 6 bytes of compiled vertex shader
@@ -32,7 +31,10 @@ namespace ExtractShaderCache
         private static byte[] headerBytesPS = {0x00, 0x03, 0xFF, 0xFF, 0xFE, 0xFF};
         // Last 4 bytes of compiled shader
         private static byte[] endBytes = {0xFF, 0xFF, 0x00, 0x00};
+        // The shader data to be output
+        private static byte[] shaderData;
 
+        // Filestream and reader/writer to handle file inputs and outputs
         private static FileStream fs;
         private static BinaryReader br;
         private static BinaryWriter bw;
@@ -41,10 +43,15 @@ namespace ExtractShaderCache
         private static long startPosition = long.MaxValue;
         // End position of shader in cache
         private static long endPosition = long.MaxValue;
-        // Position need to reset the binary reader
+        // Position needed to reset the binary reader
         private static long resetHeaderPosition = long.MaxValue;
         // Position need to reset the binary reader
         private static long resetEndPosition = long.MaxValue;
+
+        // Shader counter for output shader names
+        private static int shaderNum = 1;
+        // Length of the shader in bytes
+        private static int numBytes = 0;
 
         public static void Main(string[] args)
         {
@@ -129,7 +136,7 @@ namespace ExtractShaderCache
                                     // Read in 4 bytes
                                     buffer = br.ReadBytes(endBytes.Length);
 
-                                    // If the buffer matches the footer, record the position of the end of the footer
+                                    // If the buffer matches the footer, record the position at the end of the footer
                                     // and then proceed with extraction
                                     if (buffer.SequenceEqual(endBytes))
                                     {
@@ -138,10 +145,28 @@ namespace ExtractShaderCache
 
                                         // SANITY CHECK - display end positions
                                         Console.WriteLine("Shader ends at byte: " + endPosition);
+
+                                        // Determine length of shader
+                                        numBytes = (int)(endPosition - startPosition);
+
+                                        // Set the reader back to the start of the shader
+                                        br.BaseStream.Position = startPosition;
+
+                                        // Instantiate shader data array
+                                        shaderData = new byte[numBytes];
+
+                                        // Read the bytes into the shader array
+                                        shaderData = br.ReadBytes(numBytes);
                                         
-                                        //
-                                        // DO THE EXTRACTION
-                                        //
+                                        // Begin writing shader data to output file
+                                        using (bw = new BinaryWriter(File.Open(outputPath + shaderNum + ".fx",
+                                                                          FileMode.Create)))
+                                        {
+                                            bw.Write(shaderData);
+                                        }
+
+                                        // Increment shader number for next shader
+                                        shaderNum++;
                                     }
 
                                     // Set br's position to 2nd byte of buffer
@@ -158,7 +183,7 @@ namespace ExtractShaderCache
                     }
                 }
             }
-            else
+            else // Otherwise, output error message
             {
                 Console.WriteLine("Please supply one valid Ishiiruka D3D9 shader cache file");
             }
