@@ -20,8 +20,8 @@ namespace ExtractShaderCache
         private static string cacheName = "";
         // Path for output shader files, w/o file name
         private static string outputPath = AppDomain.CurrentDomain.BaseDirectory;
-        // File name of output shader file
-        private static string shaderName = "";
+        // File extension, to be determined by shader type
+        private static string fileExt = "";
 
         // First 4 bytes of shader cache
         private static byte[] fileCheck = {0x44, 0x43, 0x41, 0x43}; //DCAC
@@ -158,9 +158,18 @@ namespace ExtractShaderCache
                                         // Read the bytes into the shader array
                                         shaderData = br.ReadBytes(numBytes);
                                         
+                                        // Choose appropriate file extension based on type of shader
+                                        if(isPS)
+                                        {
+                                            fileExt = ".ps";
+                                        }
+                                        if(isVS)
+                                        {
+                                            fileExt = ".vs";
+                                        }
+
                                         // Begin writing shader data to output file
-                                        using (bw = new BinaryWriter(File.Open(outputPath + shaderNum + ".fx",
-                                                                          FileMode.Create)))
+                                        using (bw = new BinaryWriter(File.Open(outputPath + shaderNum + fileExt, FileMode.Create)))
                                         {
                                             bw.Write(shaderData);
                                         }
