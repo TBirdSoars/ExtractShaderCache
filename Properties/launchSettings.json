@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ExtractShaderCache": {
+      "commandName": "Project",
+      "commandLineArgs": "\"D:\\Games\\Mods\\SA2\\ISHIIRUKA\\SA2 DX9 SHADERS without a-sync\\IDX9-vs-GSNE8P-00910.cache\""
+    }
+  }
+}
