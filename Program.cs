@@ -7,8 +7,6 @@ namespace ExtractShaderCache
 {
     class Program
     {
-        // Bool to check if cache is actually a shader cache
-        private static bool cacheCheck = false;
         // Bools for if shaders are vertex or pixel shaders
         private static bool isVS = false;
         private static bool isPS = false;
@@ -55,7 +53,7 @@ namespace ExtractShaderCache
         public static void Main(string[] args)
         {
             // If input is valid, continue with extraction
-            if(inputValidation(args))
+            if(InputValidation(args))
             {
                 // Display that cache was identified
                 Console.WriteLine("Valid Shader Cache Found: " + cacheName);
@@ -164,7 +162,7 @@ namespace ExtractShaderCache
 
         // Input validation
         // Determines if input exists, where it is, and if it is a shader cache
-        private static bool inputValidation(string[] args)
+        private static bool InputValidation(string[] args)
         {
             // Ensure something was passed to the program
             if (args.Length != 1)
