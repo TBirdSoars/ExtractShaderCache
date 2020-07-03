@@ -16,18 +16,18 @@ namespace ExtractShaderCache
         // File name of shader cache
         private static string cacheName = "";
         // Path for output shader files, w/o file name
-        private static string outputPath = AppDomain.CurrentDomain.BaseDirectory;
+        private static readonly string outputPath = AppDomain.CurrentDomain.BaseDirectory;
         // File extension, to be determined by shader type
         private static string fileExt = "";
 
         // First 4 bytes of shader cache
-        private static byte[] fileCheck = {0x44, 0x43, 0x41, 0x43}; //DCAC
+        private static readonly byte[] fileCheck = {0x44, 0x43, 0x41, 0x43}; //DCAC
         // First 6 bytes of compiled vertex shader
-        private static byte[] headerBytesVS = {0x00, 0x03, 0xFE, 0xFF, 0xFE, 0xFF};
+        private static readonly byte[] headerBytesVS = {0x00, 0x03, 0xFE, 0xFF, 0xFE, 0xFF};
         // First 6 bytes of compiled pixel shader
-        private static byte[] headerBytesPS = {0x00, 0x03, 0xFF, 0xFF, 0xFE, 0xFF};
+        private static readonly byte[] headerBytesPS = {0x00, 0x03, 0xFF, 0xFF, 0xFE, 0xFF};
         // Last 4 bytes of compiled shader
-        private static byte[] endBytes = {0xFF, 0xFF, 0x00, 0x00};
+        private static readonly byte[] endBytes = {0xFF, 0xFF, 0x00, 0x00};
         // The shader data to be output
         private static byte[] shaderData;
 
