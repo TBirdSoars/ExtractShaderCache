@@ -54,43 +54,8 @@ namespace ExtractShaderCache
 
         public static void Main(string[] args)
         {
-            // Input Validation
-            // Ensure something was passed to the program
-            if(args.Length != 1)
-            {
-                Console.WriteLine("Please supply one valid Ishiiruka D3D9 shader cache file");
-            }
-            else
-            {
-                // Set path of file
-                cachePath = args[0];
-                // Get cache file's name w/ extension
-                cacheName = Path.GetFileName(cachePath);
-
-                // First, check if the input file is actually a shader cache
-                using (fs = new FileStream(cachePath, FileMode.Open, FileAccess.Read))
-                {
-                    // Make sure that the file has at least enough data for the comparison
-                    if (fs.Length >= 4)
-                    {
-                        // Read file stream
-                        using (br = new BinaryReader(fs, Encoding.ASCII))
-                        {
-                            // Read in first 4 bytes
-                            byte[] buffer = br.ReadBytes(fileCheck.Length);
-
-                            // Now compare byte sequence to known intro bytes
-                            if (buffer.SequenceEqual(fileCheck))
-                            {
-                                cacheCheck = true;
-                            }
-                        }
-                    }
-                }
-            }
-
             // If input is valid, continue with extraction
-            if(cacheCheck)
+            if(inputValidation(args))
             {
                 // Display that cache was identified
                 Console.WriteLine("Valid Shader Cache Found: " + cacheName);
@@ -194,6 +159,53 @@ namespace ExtractShaderCache
             else // Otherwise, output error message
             {
                 Console.WriteLine("Please supply one valid Ishiiruka D3D9 shader cache file");
+            }
+        }
+
+        // Input validation
+        // Determines if input exists, where it is, and if it is a shader cache
+        private static bool inputValidation(string[] args)
+        {
+            // Ensure something was passed to the program
+            if (args.Length != 1)
+            {
+                return false;
+            }
+            else
+            {
+                // Set path of file
+                cachePath = args[0];
+                // Get cache file's name w/ extension
+                cacheName = Path.GetFileName(cachePath);
+
+                // First, check if the input file is actually a shader cache
+                using (fs = new FileStream(cachePath, FileMode.Open, FileAccess.Read))
+                {
+                    // Make sure that the file has at least enough data for the comparison
+                    if (fs.Length >= 4)
+                    {
+                        // Read file stream
+                        using (br = new BinaryReader(fs, Encoding.ASCII))
+                        {
+                            // Read in first 4 bytes
+                            byte[] buffer = br.ReadBytes(fileCheck.Length);
+
+                            // Now compare byte sequence to known intro bytes
+                            if (buffer.SequenceEqual(fileCheck))
+                            {
+                                return true;
+                            } 
+                            else
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
             }
         }
     }
